@@ -9,13 +9,15 @@ interface ListingProps {
   onToggleWishlist: (id: string) => void;
   wishlistIds: Set<string>;
   onAddToCart: (item: Wallpaper) => void;
+  onBack: () => void;
 }
 
 const Listing: React.FC<ListingProps> = ({ 
   initialFilter, 
   onToggleWishlist, 
   wishlistIds,
-  onAddToCart 
+  onAddToCart,
+  onBack
 }) => {
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [sortBy, setSortBy] = useState('Relevance');
@@ -55,7 +57,7 @@ const Listing: React.FC<ListingProps> = ({
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Category Hero: Balanced Height */}
+      {/* Category Hero */}
       <section className="relative h-[400px] md:h-[500px] w-full flex flex-col justify-center items-center text-center px-6 overflow-hidden">
         <img 
           src={categoryContext?.image} 
@@ -97,7 +99,10 @@ const Listing: React.FC<ListingProps> = ({
       {/* Breadcrumb & Count */}
       <div className="max-w-7xl mx-auto px-6 py-6 border-b border-gray-100 flex items-center justify-between">
         <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
-          <button className="flex items-center gap-1.5 hover:text-rose-900 transition-colors">
+          <button 
+            onClick={onBack}
+            className="flex items-center gap-1.5 hover:text-rose-900 transition-colors"
+          >
             <ArrowLeft className="w-3.5 h-3.5" /> Back
           </button>
           <span className="w-px h-3 bg-gray-200"></span>
@@ -113,7 +118,6 @@ const Listing: React.FC<ListingProps> = ({
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col">
-        {/* Filters & Sorting Bar */}
         <div className="flex items-center justify-between mb-12">
           <button 
             onClick={() => setFilterDrawerOpen(true)}
@@ -140,7 +144,6 @@ const Listing: React.FC<ListingProps> = ({
           </div>
         </div>
 
-        {/* Wallpaper Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-16">
           {filteredWallpapers.map((wp) => (
             <div key={wp.id} className="group relative cursor-pointer flex flex-col">
@@ -183,7 +186,6 @@ const Listing: React.FC<ListingProps> = ({
         </div>
       </div>
 
-      {/* Filter Sidebar */}
       {filterDrawerOpen && (
         <div className="fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-md" onClick={() => setFilterDrawerOpen(false)}></div>

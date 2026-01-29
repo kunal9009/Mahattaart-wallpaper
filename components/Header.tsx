@@ -1,12 +1,14 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, ShoppingBag, User, Heart, X } from 'lucide-react';
+import { Search, ShoppingBag, User, Heart, X, ChevronLeft } from 'lucide-react';
 
 interface HeaderProps {
   onNavigateHome: () => void;
   onNavigateListing: (type?: string, value?: string) => void;
   onNavigateWishlist: () => void;
   onNavigateCart: () => void;
+  onBack: () => void;
+  canGoBack: boolean;
   wishlistCount: number;
   cartCount: number;
 }
@@ -16,6 +18,8 @@ const Header: React.FC<HeaderProps> = ({
   onNavigateListing, 
   onNavigateWishlist, 
   onNavigateCart,
+  onBack,
+  canGoBack,
   wishlistCount,
   cartCount
 }) => {
@@ -29,39 +33,50 @@ const Header: React.FC<HeaderProps> = ({
   }, [isSearchExpanded]);
 
   const navItems = [
-    { label: 'Wall Art', action: () => onNavigateListing('category', 'Abstract') }, // Example mapping
-    { label: 'Print & Frame', action: () => onNavigateListing('category', 'Modern') }, // Example mapping
+    { label: 'Wall Art', action: () => onNavigateListing('category', 'Abstract') },
+    { label: 'Print & Frame', action: () => onNavigateListing('category', 'Modern') },
     { label: 'Wallpaper', action: () => onNavigateListing() },
-    { label: 'Art For Business', action: () => onNavigateListing('roomType', 'Office') } // Example mapping
+    { label: 'Art For Business', action: () => onNavigateListing('roomType', 'Office') }
   ];
 
   return (
     <header className="bg-white z-50 shadow-sm sticky top-0">
-      {/* Consolidated Premium Header Bar */}
       <div className="border-b border-gray-100 px-6 py-3">
         <div className="max-[1440px] mx-auto flex items-center justify-between gap-4 md:gap-8">
           
-          {/* Logo Section */}
-          <div 
-            onClick={onNavigateHome}
-            className="flex flex-col cursor-pointer hover:opacity-90 transition-all shrink-0 select-none"
-          >
-            <div className="flex items-end">
-              <span className="text-[24px] md:text-[32px] font-bold leading-none tracking-tight text-[#600b0b] font-serif pr-1">
-                Mahatta
-              </span>
-              <div className="bg-[#600b0b] text-white px-2 py-1 md:px-2.5 md:py-1.5 flex items-center justify-center leading-none">
-                <span className="text-lg md:text-2xl font-bold tracking-tight">ART</span>
+          {/* Back Button & Logo Section */}
+          <div className="flex items-center gap-2 md:gap-4 shrink-0">
+            {canGoBack && (
+              <button 
+                onClick={onBack}
+                className="p-2 hover:bg-rose-50 rounded-full text-[#600b0b] transition-all group/back"
+                aria-label="Go Back"
+              >
+                <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 group-hover/back:-translate-x-1 transition-transform" />
+              </button>
+            )}
+            
+            <div 
+              onClick={onNavigateHome}
+              className="flex flex-col cursor-pointer hover:opacity-90 transition-all select-none"
+            >
+              <div className="flex items-end">
+                <span className="text-[24px] md:text-[32px] font-bold leading-none tracking-tight text-[#600b0b] font-serif pr-1">
+                  Mahatta
+                </span>
+                <div className="bg-[#600b0b] text-white px-2 py-1 md:px-2.5 md:py-1.5 flex items-center justify-center leading-none">
+                  <span className="text-lg md:text-2xl font-bold tracking-tight">ART</span>
+                </div>
               </div>
-            </div>
-            <div className="mt-1 hidden sm:block">
-              <p className="text-[8px] md:text-[11px] uppercase tracking-[0.25em] text-gray-500 font-medium whitespace-nowrap">
-                Transform Your <span className="text-[#600b0b]/70">Walls</span>
-              </p>
+              <div className="mt-1 hidden sm:block">
+                <p className="text-[8px] md:text-[11px] uppercase tracking-[0.25em] text-gray-500 font-medium whitespace-nowrap">
+                  Transform Your <span className="text-[#600b0b]/70">Walls</span>
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* Center Navigation - New Items */}
+          {/* Center Navigation */}
           <nav className="hidden lg:flex items-center gap-6 xl:gap-8 shrink-0 relative">
             {navItems.map((item) => (
               <button 
@@ -76,8 +91,6 @@ const Header: React.FC<HeaderProps> = ({
 
           {/* Dynamic Search & Actions Container */}
           <div className="flex items-center justify-end flex-grow gap-1 md:gap-4 min-w-0">
-            
-            {/* Search Bar */}
             <div className={`relative flex items-center transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] h-11 ${
               isSearchExpanded ? 'flex-grow max-w-md' : 'w-11'
             }`}>
@@ -112,7 +125,6 @@ const Header: React.FC<HeaderProps> = ({
               )}
             </div>
 
-            {/* Utility Icons */}
             <div className="flex items-center gap-0.5 md:gap-2 shrink-0">
               <button 
                 onClick={onNavigateWishlist}

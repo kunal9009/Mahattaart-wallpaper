@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Page, Wallpaper, CartItem } from './types.ts';
 import Home from './pages/Home.tsx';
 import Listing from './pages/Listing.tsx';
@@ -8,10 +8,20 @@ import Cart from './pages/Cart.tsx';
 import Header from './components/Header.tsx';
 import Footer from './components/Footer.tsx';
 
+interface PageState {
+  page: Page;
+  filter: { type: string; value: string } | null;
+}
+
 const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState<Page>(Page.Home);
-  const [selectedFilter, setSelectedFilter] = useState<{ type: string; value: string } | null>(null);
+  // History stack to track navigation
+  const [history, setHistory] = useState<PageState[]>([{ page: Page.Home, filter: null }]);
   
+  // Computed current state
+  const currentState = history[history.length - 1];
+  const currentPage = currentState.page;
+  const selectedFilter = currentState.filter;
+
   // E-commerce State
   const [wishlistIds, setWishlistIds] = useState<Set<string>>(new Set());
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -21,14 +31,24 @@ const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPage]);
 
+  const navigateTo = useCallback((page: Page, filter: { type: string; value: string } | null = null) => {
+    setHistory(prev => [...prev, { page, filter }]);
+  }, []);
+
+  const handleBack = useCallback(() => {
+    if (history.length > 1) {
+      setHistory(prev => prev.slice(0, -1));
+    }
+  }, [history]);
+
   const navigateToListing = (type: string, value: string) => {
-    setSelectedFilter({ type, value });
-    setCurrentPage(Page.Listing);
+    navigateTo(Page.Listing, { type, value });
   };
 
   const navigateToHome = () => {
-    setSelectedFilter(null);
-    setCurrentPage(Page.Home);
+    // If we're going "Home" via a logo click, we usually want to clear history or just jump to home
+    // Here we jump to home as a new entry to the stack, or we could reset. Let's push for simplicity.
+    navigateTo(Page.Home, null);
   };
 
   const toggleWishlist = (id: string) => {
@@ -50,8 +70,7 @@ const App: React.FC = () => {
       }
       return [...prev, { ...wallpaper, quantity: 1 }];
     });
-    // Optional: Switch to cart or show a toast
-    setCurrentPage(Page.Cart);
+    navigateTo(Page.Cart, null);
   };
 
   const updateCartQuantity = (id: string, delta: number) => {
@@ -79,6 +98,7 @@ const App: React.FC = () => {
             onToggleWishlist={toggleWishlist}
             wishlistIds={wishlistIds}
             onAddToCart={addToCart}
+            onBack={handleBack}
           />
         );
       case Page.Wishlist:
@@ -88,6 +108,7 @@ const App: React.FC = () => {
             onToggleWishlist={toggleWishlist}
             onAddToCart={addToCart}
             onNavigateListing={() => navigateToListing('all', 'all')}
+            onBack={handleBack}
           />
         );
       case Page.Cart:
@@ -97,6 +118,7 @@ const App: React.FC = () => {
             onUpdateQuantity={updateCartQuantity} 
             onRemoveItem={removeFromCart}
             onNavigateListing={() => navigateToListing('all', 'all')}
+            onBack={handleBack}
           />
         );
       default:
@@ -114,8 +136,10 @@ const App: React.FC = () => {
       <Header 
         onNavigateHome={navigateToHome} 
         onNavigateListing={() => navigateToListing('all', 'all')} 
-        onNavigateWishlist={() => setCurrentPage(Page.Wishlist)}
-        onNavigateCart={() => setCurrentPage(Page.Cart)}
+        onNavigateWishlist={() => navigateTo(Page.Wishlist, null)}
+        onNavigateCart={() => navigateTo(Page.Cart, null)}
+        onBack={handleBack}
+        canGoBack={history.length > 1 && currentPage !== Page.Home}
         wishlistCount={wishlistIds.size}
         cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)}
       />

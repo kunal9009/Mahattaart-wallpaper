@@ -1,23 +1,25 @@
 
 import React from 'react';
-import { CartItem } from '../types';
-import { Trash2, Minus, Plus, ShoppingBag, ArrowRight, ShieldCheck } from 'lucide-react';
+import { CartItem } from '../types.ts';
+import { Trash2, Minus, Plus, ShoppingBag, ArrowRight, ShieldCheck, ArrowLeft } from 'lucide-react';
 
 interface CartProps {
   items: CartItem[];
   onUpdateQuantity: (id: string, delta: number) => void;
   onRemoveItem: (id: string) => void;
   onNavigateListing: () => void;
+  onBack: () => void;
 }
 
 const Cart: React.FC<CartProps> = ({ 
   items, 
   onUpdateQuantity, 
   onRemoveItem,
-  onNavigateListing
+  onNavigateListing,
+  onBack
 }) => {
   const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const shipping = 0; // Free shipping as per top banner
+  const shipping = 0;
   const total = subtotal + shipping;
 
   if (items.length === 0) {
@@ -30,19 +32,33 @@ const Cart: React.FC<CartProps> = ({
         <p className="text-gray-500 max-w-md mb-10 italic">
           Ready to transform your walls? Browse our curated designs and add them to your cart.
         </p>
-        <button 
-          onClick={onNavigateListing}
-          className="bg-rose-900 text-white px-10 py-4 rounded-full font-bold uppercase tracking-widest hover:bg-rose-800 transition-all flex items-center gap-2"
-        >
-          Browse Wallpapers <ArrowRight className="w-4 h-4" />
-        </button>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <button 
+            onClick={onNavigateListing}
+            className="bg-rose-900 text-white px-10 py-4 rounded-full font-bold uppercase tracking-widest hover:bg-rose-800 transition-all flex items-center justify-center gap-2"
+          >
+            Browse Wallpapers <ArrowRight className="w-4 h-4" />
+          </button>
+          <button 
+            onClick={onBack}
+            className="bg-white border-2 border-gray-100 text-gray-400 px-10 py-4 rounded-full font-bold uppercase tracking-widest hover:border-[#600b0b] hover:text-[#600b0b] transition-all flex items-center justify-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" /> Go Back
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-20">
-      <div className="flex flex-col items-center mb-16">
+      <div className="flex flex-col items-center mb-16 relative">
+        <button 
+          onClick={onBack}
+          className="absolute left-0 top-0 hidden md:flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-rose-900 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back
+        </button>
         <h1 className="text-4xl font-serif font-bold text-gray-800 mb-4 tracking-wider">Your Shopping Cart</h1>
         <div className="flex items-center gap-4">
           <div className="w-12 h-px bg-rose-200"></div>
@@ -52,7 +68,6 @@ const Cart: React.FC<CartProps> = ({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
-        {/* Cart Items List */}
         <div className="lg:col-span-2 space-y-8">
           {items.map((item) => (
             <div key={item.id} className="flex flex-col sm:flex-row gap-8 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
@@ -101,7 +116,6 @@ const Cart: React.FC<CartProps> = ({
           ))}
         </div>
 
-        {/* Order Summary Summary Summary */}
         <div className="lg:col-span-1">
           <div className="bg-rose-50/30 border border-rose-100 rounded-[2.5rem] p-10 sticky top-40">
             <h2 className="text-2xl font-serif font-bold text-gray-800 mb-8 tracking-tight">Order Summary</h2>
