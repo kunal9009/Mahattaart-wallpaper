@@ -27,8 +27,8 @@ const Wishlist: React.FC<WishlistProps> = ({
         <div className="bg-rose-50 p-8 rounded-full mb-6">
           <Heart className="w-16 h-16 text-rose-200" />
         </div>
-        <h2 className="text-3xl font-serif font-bold text-gray-800 mb-4">Your Wishlist is Empty</h2>
-        <p className="text-gray-500 max-w-md mb-10 italic">
+        <h2 className="text-3xl font-serif font-medium text-gray-800 mb-4">Your Wishlist is Empty</h2>
+        <p className="text-gray-500 max-w-md mb-10 italic font-light">
           Start exploring our museum-grade collections and save your favorite designs for later.
         </p>
         <div className="flex flex-col sm:flex-row gap-4">
@@ -50,26 +50,27 @@ const Wishlist: React.FC<WishlistProps> = ({
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-20">
+    <div className="max-w-7xl mx-auto px-6 py-20 font-serif">
       <div className="flex flex-col items-center mb-16 relative">
         <button 
           onClick={onBack}
-          className="absolute left-0 top-0 hidden md:flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-rose-900 transition-colors"
+          className="absolute left-0 top-0 hidden md:flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-rose-900 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
-        <h1 className="text-4xl font-serif font-bold text-gray-800 mb-4 tracking-wider">Your Wishlist</h1>
+        <h1 className="text-4xl font-serif font-medium text-gray-800 mb-4 tracking-wider italic">Your Wishlist</h1>
         <div className="flex items-center gap-4">
-          <div className="w-12 h-px bg-rose-200"></div>
-          <Heart className="w-4 h-4 text-rose-800 fill-rose-800" />
-          <div className="w-12 h-px bg-rose-200"></div>
+          <div className="w-12 h-[1px] bg-rose-200"></div>
+          <Heart className="w-3 h-3 text-rose-800 fill-rose-800" />
+          <div className="w-12 h-[1px] bg-rose-200"></div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
         {wishlistItems.map((item) => (
           <div key={item.id} className="group flex flex-col bg-white border border-gray-100 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500">
-            <div className="aspect-[4/5] overflow-hidden relative">
+            {/* Updated to landscape 4:3 aspect ratio */}
+            <div className="aspect-[4/3] overflow-hidden relative">
               <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
               <button 
                 onClick={() => onToggleWishlist(item.id)}
@@ -80,8 +81,8 @@ const Wishlist: React.FC<WishlistProps> = ({
             </div>
             <div className="p-8 flex flex-col flex-grow">
               <div className="flex justify-between items-start mb-2">
-                <h3 className="text-xl font-serif font-bold text-gray-800">{item.name}</h3>
-                <span className="text-rose-900 font-black text-lg">₹{item.price}</span>
+                <h3 className="text-xl font-serif font-medium text-gray-800 italic">{item.name}</h3>
+                <span className="text-rose-900 font-medium text-lg">₹{item.price}</span>
               </div>
               <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-6">
                 {item.collection} • {item.roomType}
